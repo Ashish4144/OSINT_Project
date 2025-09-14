@@ -16,16 +16,15 @@ An open-source intelligence (OSINT) tool that checks for the existence of a give
 
 To run this project, you'll need Python 3 and a few libraries.
 
-    Clone the repository:
-    Bash
+    Clone the repository: git clone https://github.com/YourUsername/your-repo-name.git
+    Bash: cd your-repo-name
 
-git clone https://github.com/YourUsername/your-repo-name.git
-cd your-repo-name
 
 Install dependencies:
+
 Bash
 
-pip install Flask requests
+    pip install Flask requests
 
 Run the Flask application:
 Bash
