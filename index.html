@@ -2,62 +2,213 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>USearch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Name Navigator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 600px;
-        margin: auto;
-        padding: 20px;
+      :root {
+        --background: #121212;
+        --surface: #1e1e1e;
+        --primary: #bb86fc;
+        --on-surface: #e0e0e0;
+        --on-surface-secondary: #a0a0a0;
+        --success: #03dac6;
+        --error: #cf6679;
+        --border-color: #333;
       }
-      input,
-      button {
-        padding: 10px;
-        font-size: 16px;
-        margin: 5px 0;
-        width: 100%;
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background);
+        color: var(--on-surface);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
         box-sizing: border-box;
       }
-      .result {
-        margin-top: 10px;
-        padding: 8px;
-        border-radius: 5px;
+
+      .container {
+        width: 100%;
+        max-width: 550px;
+        background-color: var(--surface);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
       }
-      .found {
-        background: #e6ffe6;
-        color: green;
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
       }
-      .not-found {
-        background: #ffe6e6;
-        color: red;
+
+      h1 .fa-compass {
+        color: var(--primary);
       }
-      #status {
+
+      p.subtitle {
+        color: var(--on-surface-secondary);
+        margin-bottom: 30px;
+      }
+
+      .search-box {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      #username-input {
+        flex-grow: 1;
+        padding: 12px 15px;
+        font-size: 1rem;
+        background-color: var(--background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--on-surface);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      #username-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.2);
+      }
+
+      #search-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        font-weight: 500;
+        background-color: var(--primary);
+        color: #121212;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      #search-btn:hover {
+        background-color: #a764fa;
+      }
+
+      #results-div .result {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        text-align: left;
+        font-weight: 500;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      #results-div .loading-bar {
+        height: 4px;
+        background-color: var(--primary);
+        width: 0;
+        border-radius: 2px;
+        animation: loading 2s infinite;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes loading {
+        0% {
+          width: 0;
+        }
+        50% {
+          width: 100%;
+        }
+        100% {
+          width: 0;
+        }
+      }
+
+      #results-div .found {
+        background-color: rgba(3, 218, 198, 0.1);
+        color: var(--success);
+        border: 1px solid var(--success);
+      }
+
+      #results-div .not-found {
+        background-color: rgba(207, 102, 121, 0.1);
+        color: var(--error);
+        border: 1px solid var(--error);
+      }
+
+      .status {
         font-style: italic;
-        color: #555;
-        margin-top: 10px;
+        color: var(--on-surface-secondary);
+        margin-bottom: 15px;
+        height: 20px;
+      }
+      .found a {
+        color: var(--primary); /* New color for link on found items */
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 10px;
       }
     </style>
   </head>
   <body>
-    <h2>🔎 OSINT Username Searcher</h2>
-    <input type="text" id="username" placeholder="Enter username..." />
-    <button onclick="searchUsername()">Search</button>
-    <div id="status"></div>
-    <div id="results"></div>
+    <div class="container">
+      <h1><i class="fa-regular fa-compass"></i> Name Navigator</h1>
+      <p class="subtitle">
+        Check username availability instantly across 50+ platforms.
+      </p>
+
+      <div class="search-box">
+        <input type="text" id="username-input" placeholder="e.g., johndoe" />
+        <button id="search-btn">Search</button>
+      </div>
+
+      <div id="status-div" class="status"></div>
+
+      <div id="results-div"></div>
+    </div>
 
     <script>
-      function searchUsername() {
-        const username = document.getElementById("username").value.trim();
-        const resultsDiv = document.getElementById("results");
-        const statusDiv = document.getElementById("status");
+      const usernameInput = document.getElementById("username-input");
+      const searchBtn = document.getElementById("search-btn");
+      const resultsDiv = document.getElementById("results-div");
+      const statusDiv = document.getElementById("status-div");
 
-        resultsDiv.innerHTML = "";
-        statusDiv.innerHTML = "";
-
+      function searchUser() {
+        const username = usernameInput.value.trim();
         if (!username) {
-          statusDiv.innerHTML = "<p>Please enter a username.</p>";
+          statusDiv.textContent = "Please enter a username.";
           return;
         }
+
+        resultsDiv.innerHTML = "";
+        statusDiv.textContent = "Searching...";
+
+        const loadingBar = document.createElement("div");
+        loadingBar.className = "loading-bar";
+        resultsDiv.appendChild(loadingBar);
 
         const eventSource = new EventSource(
           `/search?username=${encodeURIComponent(username)}`
@@ -65,34 +216,55 @@
 
         eventSource.onmessage = function (event) {
           const data = JSON.parse(event.data);
+
           if (data.error) {
-            statusDiv.innerHTML = `<p style="color:red;">⚠️ ${data.error}</p>`;
+            statusDiv.textContent = `Error: ${data.error}`;
             eventSource.close();
             return;
           }
 
-          const { site, url, found, is_complete } = data;
-
-          if (is_complete) {
-            statusDiv.innerHTML = `Search complete for ${username}.`;
+          if (data.is_complete) {
+            statusDiv.textContent = "Search complete.";
+            resultsDiv.removeChild(loadingBar);
             eventSource.close();
             return;
           }
 
-          statusDiv.innerHTML = `Checking **${site}**...`;
+          statusDiv.textContent = `Checking ${data.site}...`;
 
-          if (found) {
-            resultsDiv.innerHTML += `<p class="result found">✅ Found on <a href="${url}" target="_blank">${site}</a></p>`;
+          const div = document.createElement("div");
+          div.className = "result " + (data.found ? "found" : "not-found");
+
+          const icon = data.found ? "✅" : "❌";
+          const text = data.found
+            ? `Found on ${data.site}`
+            : `Not found on ${data.site}`;
+
+          // Conditionally add the link with a specific style
+          if (data.found) {
+            div.innerHTML = `${icon} ${text} <a href="${data.url}" target="_blank">Link</a>`;
           } else {
-            resultsDiv.innerHTML += `<p class="result not-found">❌ Not found on ${site}</p>`;
+            div.innerHTML = `${icon} ${text}`;
           }
+
+          resultsDiv.insertBefore(div, loadingBar);
         };
 
-        eventSource.onerror = function () {
-          statusDiv.innerHTML = "Search finished.";
+        eventSource.onerror = function (error) {
+          console.error("EventSource failed:", error);
+          statusDiv.textContent = "Search failed. Please try again.";
+          resultsDiv.removeChild(loadingBar);
           eventSource.close();
         };
       }
+
+      searchBtn.addEventListener("click", searchUser);
+
+      usernameInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          searchUser();
+        }
+      });
     </script>
   </body>
 </html>
